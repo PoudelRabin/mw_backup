@@ -10,7 +10,7 @@ error_reporting(E_ERROR | E_PARSE);
 $settings = array();
 $settings['dbName'] = 'core';
 $settings['dbHost'] = 'localhost';
-$settings['dbUser'] = 'root';
+$settings['dbUser'] = 'usr';
 $settings['dbPassword'] = '';
 
 // better to provide the absolute path here
@@ -18,6 +18,7 @@ $settings['uploadDir'] = 'core/images';
 $settings['dailybackupsfolder'] = 'daily_backups';
 $settings['weeklybackupsfolder'] = 'weekly_backups';
 $settings['monthlybackupsfolder'] = 'monthly_backups';
+$excludeDir = '/var/www/html/mediawiki/images/thumb'; //Directory to exclude form the images backup
 
 echo "Hello! Lets begin making backups.\n";
 
@@ -36,10 +37,10 @@ if (!file_exists($settings['monthlybackupsfolder'])) {
 echo "Date: ". date("Y/m/d") . "\n";
 
 echo "Creating mysql dump\n";
-exec( "mysqldump -u ". $settings['dbUser'] ." --password=" . $settings['dbPassword'] . " " . $settings['dbName'] . " | gzip > mysqldump.sql.gz.tmp"  );
+exec( "mysqldump -u ". $settings['dbUser'] ." --password=" . $settings['dbPassword'] . " --no-tablespaces " . $settings['dbName'] . " | gzip > mysqldump.sql.gz.tmp"  );
 
 echo "Creating images backup\n";
-exec("tar -cvpzf imagesbackup.tar.gz.tmp " . $settings['uploadDir']);
+exec("tar --exclude=$excludeDir -cvpzf imagesbackup.tar.gz.tmp " . $settings['uploadDir']);
 
 exec( "cp mysqldump.sql.gz.tmp " . $settings['dailybackupsfolder']. "/dbdump-" . date("Y-m-d") . ".sql.gz" );
 exec( "cp imagesbackup.tar.gz.tmp " . $settings['dailybackupsfolder']. "/imagesbackup-" . date("Y-m-d") . ".tar.gz" );
