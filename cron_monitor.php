@@ -1,7 +1,7 @@
 <?php
 $settings = array();
 
-$settings['failure_email_address'] = 'nischayn22@gmail.com';
+$settings['failure_email_address'] = ''; // add to email address would receive the message
 $settings['mail_success'] = true;
 
 $line_to_check = $argv[1];
